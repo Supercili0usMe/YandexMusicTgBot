@@ -1,10 +1,9 @@
 from telebot import TeleBot
-from configparser import ConfigParser
+import webbrowser
+from bot.config import TELEGRAM_BOT_TOKEN
 
 # Чтение из конфигурационного файла
-config = ConfigParser()
-config.read("config.ini")
-bot = TeleBot(config['telegram']["TELEGRAM_BOT_TOKEN"])
+bot = TeleBot(TELEGRAM_BOT_TOKEN)
 
 # Обработка стартовых команд 
 @bot.message_handler(commands=["start", 'main', 'hello'])
@@ -21,6 +20,11 @@ def answer(message):
 def answer(message):
     bot.send_message(message.chat.id, message)    
 
+# Обработка команды site или website
+@bot.message_handler(commands=["site", "website"])
+def site(message):
+    webbrowser.open("https://youtu.be/dQw4w9WgXcQ?si=pQXHdXpZquPp3WKY")
+
 #Обработка любого текста, введённого пользователем
 @bot.message_handler()
 def info(message):
@@ -28,6 +32,8 @@ def info(message):
         bot.send_message(message.chat.id, f"Привет, {message.from_user.username}!")
     elif message.text.lower() == "id":
         bot.reply_to(message, f"ID: {message.from_user.id}")
+    elif message.text.lower() == "я":
+        bot.reply_to(message, "свинья))")
 
 
 # Отладочный модуль
