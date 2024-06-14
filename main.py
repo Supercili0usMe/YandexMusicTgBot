@@ -3,7 +3,7 @@ from configparser import ConfigParser
 
 # Чтение из конфигурационного файла
 config = ConfigParser()
-config.read(r"config.ini")
+config.read("config.ini")
 bot = TeleBot(config['telegram']["TELEGRAM_BOT_TOKEN"])
 
 # Обработка стартовых команд 
