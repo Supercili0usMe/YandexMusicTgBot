@@ -16,16 +16,35 @@ def get_photo(message):
     markup.row(btn2, btn3)
     bot.reply_to(message, "Красивое...", reply_markup=markup)
 
+# Обработка внутренних функций
+@bot.callback_query_handler(func=lambda callback: True)
+def callback_message(callback):
+    if callback.data == 'delete':
+        bot.delete_message(callback.message.chat.id, callback.message.message_id - 1)
+    elif callback.data == 'edit':
+        bot.edit_message_text("Edit text", callback.message.chat.id, callback.message.message_id)
+
 # Обработка стартовых команд 
 @bot.message_handler(commands=["start", 'main', 'hello'])
-def answer(message):
-    markup = types.InlineKeyboardMarkup()
-    btn1 = types.InlineKeyboardButton("Перейди на сайт!", url="https://youtu.be/dQw4w9WgXcQ")
+def start(message):
+    markup = types.ReplyKeyboardMarkup()
+    btn1 = types.KeyboardButton("Перейди на сайт!")
     markup.row(btn1)
-    btn2 = types.InlineKeyboardButton("Удалить фото", callback_data="delete")
-    btn3 = types.InlineKeyboardButton("Изменить текст", callback_data="edit")
+    btn2 = types.KeyboardButton("Удалить фото")
+    btn3 = types.KeyboardButton("Хочу мем")
     markup.row(btn2, btn3)
-    bot.reply_to(message, f"Привет, {message.from_user.username}!", reply_markup=markup)
+    with open(".\YandexMusicTgBot\hqdefault.jpg", 'rb') as file:
+        bot.send_photo(message.chat.id, file, reply_markup=markup)
+    # bot.send_message(message.chat.id, f"Привет, {message.from_user.username}!", reply_markup=markup)
+    bot.register_next_step_handler(message, on_click)
+
+def on_click(message):
+    if message.text == "Перейди на сайт!":
+        bot.send_message(message.chat.id, "ага, конечно")
+    elif message.text == "Удалить фото":
+        bot.send_message(message.chat.id, "Еще чего")
+    elif message.text == "Хочу мем":
+        bot.send_message(message.chat.id, "Перехочешь")
 
 # Обработка команды help
 @bot.message_handler(commands=["help"])
