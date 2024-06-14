@@ -3,10 +3,10 @@ from configparser import ConfigParser
 
 # Чтение из конфигурационного файла
 config = ConfigParser()
-config.read("config.ini")
+config.read(r"config.ini")
 bot = TeleBot(config['telegram']["TELEGRAM_BOT_TOKEN"])
 
-# Обработка стартовых команд
+# Обработка стартовых команд 
 @bot.message_handler(commands=["start", 'main', 'hello'])
 def answer(message):
     bot.send_message(message.chat.id, f"Привет, {message.from_user.username}!")
@@ -20,6 +20,14 @@ def answer(message):
 @bot.message_handler(commands=["info"])
 def answer(message):
     bot.send_message(message.chat.id, message)    
+
+#Обработка любого текста, введённого пользователем
+@bot.message_handler()
+def info(message):
+    if message.text.lower() == "привет":
+        bot.send_message(message.chat.id, f"Привет, {message.from_user.username}!")
+    elif message.text.lower() == "id":
+        bot.reply_to(message, f"ID: {message.from_user.id}")
 
 
 # Отладочный модуль
