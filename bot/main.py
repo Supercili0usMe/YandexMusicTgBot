@@ -7,8 +7,20 @@ import sqlite3
 bot = TeleBot(TELEGRAM_BOT_TOKEN)
 name = None
 
-#Обработка стартовой функции
-@bot.message_handler(commands=["start"])
+
+# Обработка функции вывода погоды
+@bot.message_handler(commands=["weather"])
+def weather(message):
+    bot.send_message(message.chat.id, 'Спорим ты напишешь название города, а я выведу текущую погоду в нём')
+    bot.register_next_step_handler(message, get_weather)
+
+def get_weather(message):
+    city = message.text.strip().lower()
+
+
+
+#Обработка функции для работы с бд
+@bot.message_handler(commands=["database"])
 def start(message):
     # Создаем БД
     conn = sqlite3.connect("temp.sql")
@@ -58,7 +70,6 @@ def callback(call):
     
     bot.send_message(call.message.chat.id, info)
 
-
 # Обработка файлов
 @bot.message_handler(content_types=["photo"])
 def get_photo(message):
@@ -79,7 +90,7 @@ def callback_message(callback):
         bot.edit_message_text("Edit text", callback.message.chat.id, callback.message.message_id)
 
 # Обработка стартовых команд 
-@bot.message_handler(commands=['main', 'hello'])
+@bot.message_handler(commands=['main', 'hello', 'start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup()
     btn1 = types.KeyboardButton("Перейди на сайт!")
@@ -87,9 +98,8 @@ def start(message):
     btn2 = types.KeyboardButton("Удалить фото")
     btn3 = types.KeyboardButton("Хочу мем")
     markup.row(btn2, btn3)
-    with open(".\YandexMusicTgBot\hqdefault.jpg", 'rb') as file:
+    with open("hqdefault.jpg", 'rb') as file:
         bot.send_photo(message.chat.id, file, reply_markup=markup)
-    # bot.send_message(message.chat.id, f"Привет, {message.from_user.username}!", reply_markup=markup)
     bot.register_next_step_handler(message, on_click)
 
 def on_click(message):
