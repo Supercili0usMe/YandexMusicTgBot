@@ -23,7 +23,7 @@ def get_weather(message):
 @bot.message_handler(commands=["database"])
 def start(message):
     # Создаем БД
-    conn = sqlite3.connect("temp.sql")
+    conn = sqlite3.connect("bot\data\temp.sql")
     cursor = conn.cursor()
 
     # Создаём таблицу
@@ -98,7 +98,7 @@ def start(message):
     btn2 = types.KeyboardButton("Удалить фото")
     btn3 = types.KeyboardButton("Хочу мем")
     markup.row(btn2, btn3)
-    with open("hqdefault.jpg", 'rb') as file:
+    with open("bot\data\hqdefault.jpg", 'rb') as file:
         bot.send_photo(message.chat.id, file, reply_markup=markup)
     bot.register_next_step_handler(message, on_click)
 
