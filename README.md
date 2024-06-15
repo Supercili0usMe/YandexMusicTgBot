@@ -7,7 +7,7 @@ Structure:
 * Directory `handlers`:
     * callback.py - handlers for postback requests (inline-menu button)
     * messages.py - handlers for text messages
-    * comands.py - handlers for comands (for example `/start`, `/help` etc.)
+    * commands.py - handlers for commands (for example `/start`, `/help` etc.)
 * Directory `utils`:
     * downloader.py - function for search and download music from Yandex.Music
 * `config.py` - file to load configurations from config.ini and provide them to other parts of the application
