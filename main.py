@@ -1,9 +1,63 @@
 from telebot import TeleBot
 from telebot import types
 from bot.config import TELEGRAM_BOT_TOKEN
+import sqlite3
 
 # Чтение из конфигурационного файла
 bot = TeleBot(TELEGRAM_BOT_TOKEN)
+name = None
+
+#Обработка стартовой функции
+@bot.message_handler(commands=["start"])
+def start(message):
+    # Создаем БД
+    conn = sqlite3.connect("temp.sql")
+    cursor = conn.cursor()
+
+    # Создаём таблицу
+    cursor.execute("CREATE TABLE IF NOT EXISTS users (id int auto_increment primary key, name varchar(50), pass varchar(50))")
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    bot.send_message(message.chat.id, "Привет, а я тебя в табличку щас запишу, поэтому введи свое имя:")
+    bot.register_next_step_handler(message, user_name)
+
+def user_name(message):
+    global name
+    name = message.text.strip()
+    bot.send_message(message.chat.id, "Введите пароль:")
+    bot.register_next_step_handler(message, user_pwd)
+
+def user_pwd(message):
+    pwd = message.text.strip()
+
+    conn = sqlite3.connect("temp.sql")
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO users (name, pass) VALUES ('%s', '%s')" % (name, pwd))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton('Список пользователей', callback_data='users'))
+    bot.send_message(message.chat.id, "Харош", reply_markup=markup)
+
+@bot.callback_query_handler(func= lambda call:True)
+def callback(call):
+    conn = sqlite3.connect("temp.sql")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from users")
+    users = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    info = ''
+    for el in users:
+        info += f"Имя: {el[1]}, Пароль: {el[2]}\n"
+    
+    bot.send_message(call.message.chat.id, info)
+
 
 # Обработка файлов
 @bot.message_handler(content_types=["photo"])
@@ -25,7 +79,7 @@ def callback_message(callback):
         bot.edit_message_text("Edit text", callback.message.chat.id, callback.message.message_id)
 
 # Обработка стартовых команд 
-@bot.message_handler(commands=["start", 'main', 'hello'])
+@bot.message_handler(commands=['main', 'hello'])
 def start(message):
     markup = types.ReplyKeyboardMarkup()
     btn1 = types.KeyboardButton("Перейди на сайт!")
