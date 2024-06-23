@@ -20,7 +20,7 @@ if __name__ == "__main__":
     page = 0
     input_query = input('Введите поисковой запрос: ')
     while True:
-        track_list, total, tracks = return_search_list(token, input_query, page)
+        track_list, total, tracks = search_list(token, input_query, page)
         print(f'\nВот что мне удалось найти в интернете по запросу "{input_query}"')
         print(f'Общее число найденных треков: {total}, страница: {page}')
         for i, r in enumerate(track_list):
