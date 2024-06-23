@@ -10,7 +10,6 @@ handlers.commands_handlers(bot)
 handlers.callback_handlers(bot)
 handlers.messages_handlers(bot)
 
-bot.register_callback_query_handler()
 
 # Отладочный модуль
 if __name__ == "__main__":

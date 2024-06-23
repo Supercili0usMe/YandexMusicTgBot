@@ -3,13 +3,13 @@ import sqlite3
 from bot.handlers.callback import *
 
 def commands_handlers(bot):
-    @bot.message_handler(commands=['main', 'hello', 'start'])
+    @bot.message_handler(commands=['start'])
     def start(message):
-        markup = types.ReplyKeyboardMarkup()
-        btn1 = types.KeyboardButton("Перейди на сайт!")
+        markup = types.InlineKeyboardMarkup()
+        btn1 = types.InlineKeyboardButton("Перейди на сайт!", url="https://youtu.be/dQw4w9WgXcQ")
         markup.row(btn1)
-        btn2 = types.KeyboardButton("Удалить фото")
-        btn3 = types.KeyboardButton("Хочу мем")
+        btn2 = types.InlineKeyboardButton("Удалить фото", callback_data="delete")
+        btn3 = types.InlineKeyboardButton("Хочу мем", callback_data="edit")
         markup.row(btn2, btn3)
         with open("bot/data/hqdefault.jpg", 'rb') as file:
             bot.send_photo(message.chat.id, file, reply_markup=markup)
