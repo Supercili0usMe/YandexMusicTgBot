@@ -1,4 +1,5 @@
 from yandex_music import Client
+import io
 
 def search_list(token, query, page):
     client = Client(token)
@@ -13,7 +14,12 @@ def search_list(token, query, page):
 def download_track(tracks, id):
     client = Client().init()
     track = tracks.results[id]
-    track.download(f'{track.title}.mp3', bitrate_in_kbps=320)
+    name = f"{', '.join(track.artists_name())} - {track.title}"
+    audio_bytes = track.download_bytes(bitrate_in_kbps=320)
+    audio_stream = io.BytesIO(audio_bytes)
+    audio_stream.seek(0)
+    audio_stream.name = f"{name}.mp3"
+    return audio_stream, name
     
 if __name__ == "__main__":
     token = "y0_AgAAAABKXGhzAAG8XgAAAADQNjJ3efAwYTLuSlmTKBcHy7zXcl0OthM"
