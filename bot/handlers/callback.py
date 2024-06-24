@@ -42,7 +42,8 @@ def handle_download_music(bot, callback):
 
 def handle_back(bot, callback):
     user_id = callback.from_user.id
-    bot.delete_message(callback.message.chat.id, callback.message.message_id)
+    if get_state(user_id) == "waiting_for_song":
+        bot.delete_message(callback.message.chat.id, callback.message.message_id)
     if get_state(user_id) == "searching_track":
         bot.delete_message(callback.message.chat.id, callback.message.message_id - 1)
         bot.delete_message(callback.message.chat.id, callback.message.message_id - 2)
@@ -68,6 +69,8 @@ def handle_pagination(bot, callback):
 def handle_track_choice(bot, callback):
     track_id = int(callback.data.split("choose_track_")[1])
     send_track_info(bot, callback.message.chat.id, track_id)
+    set_state(callback.from_user.id, BotStates.START)
+
 
 def handle_song_search(bot, message):
     global page
@@ -102,4 +105,8 @@ def create_song_message(track_list: list, total: int, song_name: str, page: int)
 def send_track_info(bot, chat_id: int, track_id: int):
     global tracks
     audio_file, title = download_track(tracks, track_id)
-    bot.send_audio(chat_id, audio_file, title=title)
+    txt = "Вот! Как и просили 😊"
+    markup = types.InlineKeyboardMarkup()
+    btn = types.InlineKeyboardButton("<< Вернуться в начало", callback_data="back")
+    markup.add(btn)
+    bot.send_audio(chat_id, audio_file, title=title, reply_markup=markup, caption=txt)
