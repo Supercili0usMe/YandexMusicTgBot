@@ -1,0 +1,2 @@
+pyTelegramBotAPI==4.14.0
+yandex-music==2.2.0
